@@ -7,7 +7,7 @@
 select city, count (city) quantity
 from airports a 
 group by city 
-having count (city) > 1 
+having count (city) > 1;
 
 
 --2
@@ -23,7 +23,7 @@ join airports a2 on a2.airport_code = f.departure_airport
 join (
 	select aircraft_code, range 
 	from aircrafts a 
-	order by range desc limit 1) t on t.aircraft_code = f.aircraft_code 
+	order by range desc limit 1) t on t.aircraft_code = f.aircraft_code; 
 
 
 --3
@@ -37,7 +37,7 @@ join (
 select flight_id, flight_no, actual_departure - scheduled_departure as delay 
 from flights f 
 where actual_departure - scheduled_departure is not null
-order by actual_departure - scheduled_departure desc limit 10
+order by actual_departure - scheduled_departure desc limit 10;
 
 
 --4
@@ -52,7 +52,7 @@ select distinct b.book_ref, bp.ticket_no
 from bookings b
 join tickets t on b.book_ref = t.book_ref
 full join boarding_passes bp on t.ticket_no = bp.ticket_no 
-where bp.ticket_no is null 
+where bp.ticket_no is null; 
 
 
 --5
@@ -81,7 +81,7 @@ select flight_id, seat_all - seat_busy as seat_free, seat_busy, ((seat_all - sea
 sum(cte2.seat_busy) over (partition by cte2.departure_airport, cte2.actual_departure::date order by cte2.actual_departure) as people, 
 departure_airport, actual_departure
 from cte
-join cte2 on cte.aircraft_code = cte2.aircraft_code
+join cte2 on cte.aircraft_code = cte2.aircraft_code;
 
 
 --6
@@ -97,7 +97,7 @@ select round(count (aircraft_code)::numeric / t.count * 100) percent, aircraft_c
 from (
 	select count (flight_id)
 	from flights f ) t, flights f 
-group by aircraft_code, t.count
+group by aircraft_code, t.count;
 
 
 --7
@@ -127,7 +127,7 @@ select distinct cte3.city
 from cte
 join cte2 on cte.flight_id = cte2.flight_id
 join cte3 on cte.flight_id = cte3.flight_id 
-where cte.flight_id = cte2.flight_id and cte.amount_economy > cte2.amount_business 
+where cte.flight_id = cte2.flight_id and cte.amount_economy > cte2.amount_business;
 
 
 --8
@@ -149,14 +149,14 @@ from (
 join (
 	select distinct f.flight_id, f.arrival_airport, a.airport_code, a.city as arrival_city
 	from flights f 
-	join airports a on f.arrival_airport = a.airport_code) t2 on t.flight_id = t2.flight_id
+	join airports a on f.arrival_airport = a.airport_code) t2 on t.flight_id = t2.flight_id;
 
 select a.city, a2.city
 from airports a, airports a2 
 where a.city != a2.city  and a.city > a2.city
 except 
 select departure_city, arrival_city 
-from pair_city f 
+from pair_city f; 
 
 --9
 --Вычислите расстояние между аэропортами, связанными прямыми рейсами, 
@@ -177,4 +177,4 @@ round(acos(sind(a.latitude)*sind(a2.latitude) + cosd(a.latitude)  * cosd(a2.lati
 from flights f 
 join airports a on f.departure_airport = a.airport_code 
 join airports a2 on f.arrival_airport = a2.airport_code 
-join aircrafts a3 on f.aircraft_code = a3.aircraft_code 
+join aircrafts a3 on f.aircraft_code = a3.aircraft_code;
